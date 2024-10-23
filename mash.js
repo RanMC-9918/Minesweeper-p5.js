@@ -11,6 +11,10 @@ let time = 0;
 let alt = false;
 let offset = [40, 40]; //to center gameboard on canvas
 
+function setup() {
+  createCanvas(580, 700);
+}
+
 function preload(){
     let squaresCoveredIcon = 2;
     timeIcon = loadImage('https://cdn.glitch.global/98221742-d602-48d1-8944-d86e06cee4bd/clock.png?v=1729604906094');
