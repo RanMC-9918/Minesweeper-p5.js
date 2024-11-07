@@ -1,3 +1,37 @@
-main{
-    margin: auto;
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+body{
+  width: 100%;
+  background: rgb(220, 230, 220);
+}
+
+
+a{
+  position: absolute;
+  font-size: 1.5em;
+  font-weight: 500;
+  width: 100svw;
+  top: calc(100svh - 30px);
+  text-decoration: none;
+  text-align: right;
+  font-family: sans-serif;
+  color: black;
+  margin-right: 10px;
+}
+
+button:hover{
+  background-color: #9ba;
+  border: inset 2px;
+  cursor: pointer;
+}
+canvas{
+  position: absolute;
+  left: calc(50% - 290px);
+  top: calc(100vh - 850px);
+  border-radius: 20px;
 }
