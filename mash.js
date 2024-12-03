@@ -11,15 +11,16 @@ let time = 0;
 let alt = false;
 let offset = [40, 40]; //to center gameboard on canvas
 
-function setup() {
-  createCanvas(580, 700);
-}
-
 function preload(){
     let squaresCoveredIcon = 2;
     timeIcon = loadImage('https://cdn.glitch.global/98221742-d602-48d1-8944-d86e06cee4bd/clock.png?v=1729604906094');
     flagIcon = loadImage('https://cdn.glitch.global/98221742-d602-48d1-8944-d86e06cee4bd/red-flag.png?v=1729519594424');
 }
+
+function setup() {
+  createCanvas(580, 700);
+}
+
 
 function draw() {
     if(keyIsDown(SHIFT)){
@@ -104,7 +105,7 @@ function draw() {
     text(bombs, xCord + 200, 590, 40, 40);
 }
 
-async function mousePressed(){
+async function mouseClicked(){
     if(moves == 0){
         while(board[selRect[0]][selRect[1]] != 0){
             board = spawnBoard();
