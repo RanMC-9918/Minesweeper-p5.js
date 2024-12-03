@@ -32,6 +32,6 @@ button:hover{
 canvas{
   position: absolute;
   left: calc(50% - 290px);
-  top: calc(100vh - 850px);
+  top: calc(50vh - 350px);
   border-radius: 20px;
 }
