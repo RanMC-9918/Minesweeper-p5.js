@@ -339,4 +339,5 @@ async function drawParticles(){
         }
     }
 }
-            
+
+document.onclick = touchEnded()
