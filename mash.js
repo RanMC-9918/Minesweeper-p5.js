@@ -10,9 +10,10 @@ let timeIcon;
 let time = 0;
 let alt = false;
 let offset = [40, 40]; //to center gameboard on canvas
+const gravity = 1;
+let side = 500 / res;
 
 function preload(){
-    let squaresCoveredIcon = 2;
     timeIcon = loadImage('https://cdn.glitch.global/98221742-d602-48d1-8944-d86e06cee4bd/clock.png?v=1729604906094');
     flagIcon = loadImage('https://cdn.glitch.global/98221742-d602-48d1-8944-d86e06cee4bd/red-flag.png?v=1729519594424');
 }
@@ -32,7 +33,6 @@ function draw() {
         background(200, 210, 200);
     }
     let selText = [1, 1, 1, 1] //declaration (arbitrary values)
-    let side = 500 / res;
     let rectSel; //declaration
     
     //rect draw
@@ -55,7 +55,10 @@ function draw() {
                     
                 }
                 
-            };
+            }
+            if(shown[i][j] == 2){
+                fill(25, 200, 90);stroke(50, 85, 50);
+            }
             
             if(mouseX > i*side + offset[0] && mouseX < (i+1)*side + offset[0] + side && mouseY > j*side + offset[0] && mouseY < (j+1) * side + offset[0]){
                 rectSel = true;
@@ -73,6 +76,7 @@ function draw() {
             }
         }
     }
+    
     if(rectSel){
         stroke(45, 45, 80);
         fill(190);
@@ -83,6 +87,10 @@ function draw() {
             fill(60);
             strokeWeight(0);
             text(selText[0], selText[1], selText[2])
+        }
+        if(shown[selRect[0]][selRect[1]] == 2){
+            fill(30, 200, 100);
+            rect(selRect[0] *side + offset[0] - side*0.05, selRect[1]*side + offset[1] - side*0.05, side * 1.1, side * 1.1)
         }
         if(board[selRect[0]][selRect[1]] == -1 && shown[selRect[0]][selRect[1]] == 1){
             fill(200, 25, 90);
@@ -103,9 +111,13 @@ function draw() {
     
     image(flagIcon, xCord + 150, 585, 40, 40);
     text(bombs, xCord + 200, 590, 40, 40);
+    
+    drawParticles();
 }
 
-async function mouseClicked(){
+async function touchEnded(){
+    console.log("click rvent fired")
+    spawnParticles(selRect[0]*side+offset[0]+side/2, selRect[1]*side+offset[1]+side/2, 20);
     if(moves == 0){
         while(board[selRect[0]][selRect[1]] != 0){
             board = spawnBoard();
@@ -118,6 +130,7 @@ async function mouseClicked(){
     if(alt && shown[selRect[0]][selRect[1]] == 0){
         if(board[selRect[0]][selRect[1]] == -1){
             bombs--;
+            shown[selRect[0]][selRect[1]] = 2;
         }
         else{
             lose();
@@ -126,7 +139,9 @@ async function mouseClicked(){
     if(!alt && shown[selRect[0]][selRect[1]] == 0 && board[selRect[0]][selRect[1]] == -1){
         lose();
     }
-    shown[selRect[0]][selRect[1]] = 1;
+    if(shown[selRect[0]][selRect[1]] != 2){
+        shown[selRect[0]][selRect[1]] = 1;
+    }
     if(board[selRect[0]][selRect[1]] == 0){
         let x = selRect[0];
         let y = selRect[1];
@@ -135,10 +150,10 @@ async function mouseClicked(){
         while(coords.length > 0){
              x = coords[0].x
              y = coords[0].y
-             console.log(zeroNearby(x, y));
+             //console.log(zeroNearby(x, y));
              coords = coords.concat(zeroNearby(x, y));
              await show(x, y);
-             coords.splice(0, 1);
+             coords.shift();
         }
     }
 }
@@ -242,21 +257,22 @@ function zeroNearby(x, y){
 
 async function show(x, y){
     const time = 100 / res;
-    if(x < res-1){ shown[x+1][y] = 1 }
+    const partAm = 2;
+    if(x < res-1){ shown[x+1][y] = 1; spawnParticles((x+1)*side+offset[0]+side/2, y*side+offset[1]+side/2, partAm);}
     await sleep(time);
-    if(x > 0){ shown[x-1][y] = 1 }
+    if(x > 0){ shown[x-1][y] = 1; spawnParticles((x-1)*side+offset[0]+side/2, y*side+offset[1]+side/2, partAm);}
     await sleep(time);
-    if(y < res){ shown[x][y+1] = 1 }
+    if(y < res){ shown[x][y+1] = 1; ; spawnParticles((x+1)*side+offset[0]+side/2, y*side+offset[1]+side/2, partAm);}
     await sleep(time);
-    if(y > 0){ shown[x][y-1] = 1 }
+    if(y > 0){ shown[x][y-1] = 1; spawnParticles((x+1)*side+offset[0]+side/2, (y-1)*side+offset[1]+side/2, partAm);}
     await sleep(time);
-    if(x < res-1 && y < res) { shown[x+1][y+1] = 1 }
+    if(x < res-1 && y < res) { shown[x+1][y+1] = 1; spawnParticles((x+1)*side+offset[0]+side/2, (y+1)*side+offset[1]+side/2, partAm);}
     await sleep(time);
-    if(x > 0 && y < res){ shown[x-1][y+1] = 1 }
+    if(x > 0 && y < res){ shown[x-1][y+1] = 1; spawnParticles((x-1)*side+offset[0]+side/2, (y+1)*side+offset[1]+side/2, partAm);}
     await sleep(time);
-    if(x < res-1 && y > 0){ shown[x+1][y-1] = 1 }
+    if(x < res-1 && y > 0){ shown[x+1][y-1] = 1; spawnParticles((x+1)*side+offset[0]+side/2, (y-1)*side+offset[1]+side/2, partAm);}
     await sleep(time);
-    if(x > 0 && y > 0){ shown[x-1][y-1] = 1 }
+    if(x > 0 && y > 0){ shown[x-1][y-1] = 1; spawnParticles((x-1)*side+offset[0]+side/2, (y-1)*side+offset[1]+side/2, partAm);}
     await sleep(time);
 }
 
@@ -265,9 +281,62 @@ function sleep(ms) {
 }
 
 async function lose(){
-    const time = 30;
-    for(let i = 0; i < 10; i++){
+    const time = 15;
+    for(let i = 0; i < res; i++){
+        for(let j = 0; j < res; j++){
+            spawnParticles(i*side+offset[0]+side/2, j*side+offset[1]+side/2, 1);
+        }
+    }
+    for(let i = 0; i < 20; i++){
         offset[0] = 40 + 20 * Math.sin(i);
         await sleep(time);
     }
 }
+
+class Particle {
+    constructor(x, y, m, d){
+    this.xAcc = 0;
+    this.yAcc = gravity;
+    this.xPos = x;
+    this.yPos = y;
+    this.xVel = m * Math.cos(d);
+    this.yVel = m * Math.sin(d);
+    }
+    tickPosition(){
+        this.xVel += this.xAcc;
+        this.yVel += this.yAcc;
+        this.xPos += this.xVel;
+        this.yPos += this.yVel;
+    }
+    drawParticle(){
+        stroke(0);
+        fill(5, 60, 80);
+        rect(this.xPos, this.yPos, 5, 5);
+    }
+}
+
+let particles = [];
+
+
+
+
+function spawnParticles(x, y, n){
+    for(let i = 0; i < n; i++){
+        particles.push(new Particle(x, y, Math.random()*7.0, Math.random()*-80.0));
+    }
+
+}
+
+
+async function drawParticles(){
+    //console.log(particles.length);
+    for(let i = particles.length-1; i >= 0; i--){
+        //console.log(particles[i].yPos);
+        particles[i].drawParticle();
+        particles[i].tickPosition();
+        if(particles[i].yPos > 700){
+            particles.splice(i, 1);
+        }
+    }
+}
+            
