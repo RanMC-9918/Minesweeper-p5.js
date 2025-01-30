@@ -6,7 +6,7 @@
 
 
 body{
-  width: 100%;
+  width: 100svw;
   background: rgb(220, 230, 220);
 }
 
@@ -32,6 +32,6 @@ button:hover{
 canvas{
   position: absolute;
   left: calc(50% - 290px);
-  top: calc(50vh - 350px);
+  top: 20px;
   border-radius: 20px;
 }
